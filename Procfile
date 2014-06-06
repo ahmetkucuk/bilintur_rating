@@ -1,0 +1,1 @@
+web: gunicorn bilintur_rating.wsgi
