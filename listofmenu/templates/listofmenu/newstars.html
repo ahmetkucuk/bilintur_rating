@@ -1,0 +1,164 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>New Stars</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-9">
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-9">
+	<meta http-equiv="content-language" content="TR">
+	<link rel="shortcut icon" type="image/x-icon" href="https://sapui5.netweaver.ondemand.com/sdk/resources/sap/ui/commons/themes/sap_goldreflection/img/rating/star_selected.png">
+	
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script src="http://code.highcharts.com/highcharts.js"></script>
+	<script src="http://code.highcharts.com/modules/exporting.js"></script>
+	<script src="{% static "listofmenu/jquery.raty.js" %}"></script>
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+	<script type="text/javascript">
+
+		$(document).ready(function() {
+			$.fn.raty.defaults.path = 'static/listofmenu/images';
+			$('#star_ogle').raty({size:50});
+
+			$('#star_ogle').raty({
+				click: function(score) {
+
+					$("#star_ogle").raty({
+						'readOnly': true
+
+					});
+				    $.ajax({
+				        url: "http://127.0.0.1:8000/search/?q=" + score,
+				        type: "GET",
+				        error: function(error) {
+				            console.log(error);
+				        },
+				        success: function(data) {
+				            console.log(data);
+				            alert("data send");
+
+				            setTimeout(function() {
+				            }, 3000);
+				        }
+				    });
+
+				}
+			});
+
+			$('#star_ogle').raty('score', 4);
+
+			$('#star_aksam').raty();
+			$('#star_aksam').raty({
+				click: function(score) {
+					$("#star_aksam").raty({
+						'readOnly': true
+
+					});
+
+				    $.ajax({
+				        url: "http://127.0.0.1:8000/search/?q=" + score,
+				        type: "GET",
+				        error: function(error) {
+				            console.log(error);
+				        },
+				        success: function(data) {
+				            console.log(data);
+				            alert("Server response" + data);
+
+				            setTimeout(function() {
+				            }, 3000);
+				        }
+				    });
+
+				}
+			});
+
+			$('#star_aksam').raty('score', 4);
+
+		});
+	</script>
+
+
+	<style type="text/css">
+		.table {
+		    height: 100px;
+		    width:400px; 
+		}
+		#rating_table {
+			margin-top: 40px; 
+		}
+		#title_text {
+			margin-top: 10px;
+		}
+  </style>
+</head>
+<body>
+<div class="container">
+	<div class="content">
+	<nav class="navbar navbar-default" role="navigation">
+  <!-- Brand and toggle get grouped for better mobile display -->
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="#">RTS</a>
+  </div>
+
+  <!-- Collect the nav links, forms, and other content for toggling -->
+  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="newstars.html">Rating</a></li>
+      <li><a href="stats.html">star_selected</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+    <form class="navbar-form navbar-right" role="search">
+      <div class="form-group">
+        <input type="text" class="form-control" placeholder="Search">
+      </div>
+      <button type="submit" class="btn btn-default">Submit</button>
+    </form>
+  </div><!-- /.navbar-collapse -->
+</nav>
+	<p id="title_text">Bugun yemek nasıldı?</p>
+		<table id="rating_table" class="table center-block">
+			<thead>
+				<tr class="label-info">
+					<td>Ogun</td>
+					<td>Tarih</td>
+					<td>Yemek</td>
+					<td>Rating</td>
+					<td></td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Ogle</td>
+					<td>{{ date }}</td>
+					<td>{{ mealName }}</td>
+					<td><div id="star_ogle"></div></td>
+					<td><img src="https://cdn4.iconfinder.com/data/icons/brightmix/128/monotone_check_yes_ok.png"></img></td>
+				</tr>
+				<tr>
+					<td>Aksam</td>
+					<td>{{ date }}</td>
+					<td>{{ mealName }}</td>
+					<td><div id="star_aksam"></div></td>
+					<td><img src="https://cdn4.iconfinder.com/data/icons/brightmix/128/monotone_check_yes_ok.png"></img></td>
+				</tr>
+				
+			</tbody>
+		</table>
+	</div>
+</div>
+</body>
+</html>

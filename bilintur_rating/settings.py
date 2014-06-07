@@ -1,10 +1,11 @@
 import os
 import dj_database_url
+import urlparse
 
 boolean = lambda value: bool(int(value))
 local_path = lambda path: os.path.join(os.path.dirname(__file__), path)
 
-DEBUG = boolean(os.environ.get('DEBUG', 0))
+DEBUG = boolean(os.environ.get('DEBUG', 1))
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -13,9 +14,50 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASES = {
-    'default': dj_database_url.config(default='sqlite:///db.sqlite')
-}
+#DATABASES = {
+#    'default': dj_database_url.config(default='sqlite:///db.sqlite')
+#}
+
+# Register database schemes in URLs.
+urlparse.uses_netloc.append('mysql')
+
+try:
+
+    # Check to make sure DATABASES is set in settings.py file.
+    # If not default to {}
+
+    if 'DATABASES' not in locals():
+        DATABASES = {
+		    'default': {
+		        'ENGINE': 'django.db.backends.mysql',
+		        'NAME': 'mysql',
+		    'USER': 'root',
+		    'PASSWORD': 'root',
+		    'HOST': '/Applications/MAMP/tmp/mysql/mysql.sock',
+		    'PORT': '',
+		    }
+		}
+
+    if 'DATABASE_URL' in os.environ:
+        url = urlparse.urlparse(os.environ['DATABASE_URL'])
+
+        # Ensure default database exists.
+        DATABASES['default'] = DATABASES.get('default', {})
+
+        # Update with environment configuration.
+        DATABASES['default'].update({
+            'NAME': url.path[1:],
+            'USER': url.username,
+            'PASSWORD': url.password,
+            'HOST': url.hostname,
+            'PORT': url.port,
+        })
+
+
+        if url.scheme == 'mysql':
+            DATABASES['default']['ENGINE'] = 'django.db.backends.mysql'
+except Exception:
+    print 'Unexpected error:', sys.exc_info()
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -116,7 +158,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'gunicorn',
-    'raven.contrib.django'
+    'raven.contrib.django',
+    'listofmenu',
 )
 
 # A sample logging configuration. The only tangible logging
